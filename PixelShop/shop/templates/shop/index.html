@@ -1,0 +1,38 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ header }}</title>
+</head>
+<body>
+    <h1> {{ title }} </h1>
+    <!-- Шапка -->
+    <header>
+      <nav>
+        <a href="{% url 'add_product' %}">Добавить товар</a>
+        <a href="/admin">Админ панель</a>
+      </nav>
+    </header>
+    <!-- / Шапка -->
+    <!-- Список товаров -->
+    <main>
+
+    </main>
+    <!-- / Список товаров <-->
+    {% for product in products %}
+        <p><a href="{% url 'card_product' product.id %}">{{ product.title }} {{ product.price }}</a></p>
+        <img src="{{ product.image.url }}" width="100" height="100">
+    {% endfor %}
+    <!-- Подвал <-->
+    <footer>
+        <p>Мастерская по магическим минералам находится по адресу: г. Штормград ул. Драконовская д. 5</p>
+        <p>621 г.</p>
+    </footer>
+    <!-- / Подвал <-->
+</body>
+</html>
+
+
+
+

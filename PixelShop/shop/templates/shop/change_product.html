@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ header }}</title>
+</head>
+<body>
+    <h1> {{ title }} </h1>
+    <form action="{% url 'change_product' id %}" method="post" enctype="multipart/form-data">
+        <!-- Нужен для защиты формы от csrf-атак -->
+        {% csrf_token %}
+        <!-- Сами поля с формами и их названиями -->
+        <p>
+            <!-- В теге for мы создаём новый атрибут в поле for -->
+            <!-- Django самостоятельно создаст значение для этого поля -->
+            <!-- Если исследовать код страницы то можно увидеть значение этого поля for = 'id_title' -->
+            <!-- Этот IDишник после будет использоваться в сгенерированных Django тегах input для формы -->
+            <label for="{{ form.title.id_for_label }}">{{ form.title.label }}: </label>
+            {{ form.title }}
+        </p>
+        <p>
+            <label for="{{ form.image.id_for_label }}">{{ form.image.label }}: </label>
+            {{ form.image }}
+        </p>
+        <p>
+            <label for="{{ form.description.id_for_label }}">{{ form.description.label }}: </label>
+            {{ form.description }}
+        </p>
+        <p>
+            <label for="{{ form.price.id_for_label }}">{{ form.price.label }}: </label>
+            {{ form.price }}
+        </p>
+        <p>
+            <label for="{{ form.is_published.id_for_label }}">{{ form.is_published.label }}: </label>
+            {{ form.is_published }}
+        </p>
+        <!-- Этот чувак будет появляться в форме когда будут возникать какие-либо ошибки в вводимых данных -->
+        <p>{{ form.title.errors }}</p>
+        <!-- Это кнопка которая активирует функцию указанную в атрибуте action тега form -->
+        <button type="submit">Изменить</button>
+    </form>
+</body>
+</html>
