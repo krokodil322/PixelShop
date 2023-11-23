@@ -2,13 +2,19 @@ from .models import *
 from .forms import *
 
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponseNotFound
 
 
 def index(request):
     """Функция которая отображает главную страницу сайта"""
 
-    # тут мы получаем список всех продектов из БДшки
-    products = Product.objects.all()
+    products = []
+    for product_obj in Product.objects.all():
+        sale_obj = Sale.objects.filter(id=product_obj.sale_id)[0]
+        products.append(
+            (product_obj, sale_obj.sales)
+        )
+
     # словарик с передаваемыми данными
     context = {
         'header': 'Магазик',
@@ -23,10 +29,13 @@ def card_product(request, product_id: int):
 
     # тут мы хапаем конкретный товар по IDишнику который приходит из html-документа
     product = Product.objects.filter(id=product_id)[0]
+    # тут берём объект продаж
+    sale_obj = Sale.objects.filter(id=product.sale_id)[0]
+
     # словарик с передаваемыми данными
     context = {
-        'header': product.title,
         'product': product,
+        'sales': sale_obj.sales
     }
     return render(request, 'shop/card_product.html', context)
 
@@ -42,6 +51,11 @@ def add_product(request):
         if form.is_valid():
             # через форму в Django можно сохранить прямо в БД!
             form.save()
+
+            # сразу создаём новый объект модели продаж Sale
+            # чтобы подсчитывать кол-во продаж на сайте
+            sales = Sale()
+
             return redirect('/')
     # если просто вывести форму на экран
     form = AddProductForm()
@@ -87,3 +101,26 @@ def delete_product(request, product_id: int):
     Product.objects.filter(id=product_id).delete()
     # редиректим на главную
     return redirect('home')
+
+
+def buy_product(request, product_fk: int):
+    """Функция которая симулирует покупку на сайтике"""
+    # хапаем объект из таблицы Sales по foreign key product'а
+    sale_obj = Sale.objects.filter(id=product_fk)[0]
+
+    # инкрементируем атрибут и сохраняем изменения
+    sale_obj.sales += 1
+    sale_obj.save()
+
+    # дёргаем объектик по которому добавляли продажу и
+    # переадресуем обратно в карточку товара
+    product = Product.objects.filter(sale_id=product_fk)[0]
+
+    context = {
+        'product': product,
+    }
+    return redirect(f'/card_product/{product.id}/')
+
+
+def page_not_found(request, exception):
+    return HttpResponseNotFound('<h1>Страница не найдена!</h1>')

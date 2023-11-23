@@ -1,16 +1,21 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>{{ header }}</title>
+    <title>{{ product.title }}</title>
+    <link type="text/css" href="{% static 'shop/css/styles.css' %}" rel="stylesheet"/>
 </head>
 <body>
-    <h1><a href="{% url 'home' %}">На главную</a></h1>
-    <h1>{{ product.title }}</h1>
+    <h1><a class="text" href="{% url 'home' %}">На главную</a></h1>
+    <h1 class="text">{{ product.title }}</h1>
     <img src="{{ product.image.url }}" width="200" height="200">
-    <h2>{{ product.price }}</h2>
-    <p>{{ product.description }}</p>
-    <a href="{% url 'change_product' product.id %}">Изменить</a>
-    <a href="{% url 'delete_product' product.id %}">Удалить</a>
+    <h2 class="text">{{ product.price }} Маниту</h2>
+    <h2 class="text">Продано товара: {{ sales }}</h2>
+    <p class="text">{{ product.description }}</p>
+    <a class="text" href="{% url 'buy_product' product.sale_id %}"> Купить </a>
+    <a class="text" href="{% url 'change_product' product.id %}"> Изменить </a>
+    <a class="text" href="{% url 'delete_product' product.id %}"> Удалить </a>
 </body>
 </html>

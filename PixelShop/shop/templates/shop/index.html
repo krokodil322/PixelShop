@@ -1,17 +1,19 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <title>{{ header }}</title>
+    <link type="text/css" href="{% static 'shop/css/styles.css' %}" rel="stylesheet"/>
 </head>
 <body>
-    <h1> {{ title }} </h1>
+    <h1 class="text"> {{ title }} </h1>
     <!-- Шапка -->
     <header>
       <nav>
-        <a href="{% url 'add_product' %}">Добавить товар</a>
-        <a href="/admin">Админ панель</a>
+        <a class="text" href="{% url 'add_product' %}">Добавить товар </a>
+        <a class="text" href="/admin"> Админ панель</a>
       </nav>
     </header>
     <!-- / Шапка -->
@@ -20,14 +22,22 @@
 
     </main>
     <!-- / Список товаров <-->
-    {% for product in products %}
-        <p><a href="{% url 'card_product' product.id %}">{{ product.title }} {{ product.price }}</a></p>
-        <img src="{{ product.image.url }}" width="100" height="100">
+    {% for product, sales in products %}
+        <div class="outline">
+            <p>
+                <a class="text" href="{% url 'card_product' product.id %}">
+                    {{ product.title }} {{ product.price }} Продано: {{ sales }}
+                </a>
+            </p>
+            <img src="{{ product.image.url }}" width="100" height="100">
+        </div>
     {% endfor %}
     <!-- Подвал <-->
     <footer>
-        <p>Мастерская по магическим минералам находится по адресу: г. Штормград ул. Драконовская д. 5</p>
-        <p>621 г.</p>
+        <p class="text">
+            Мастерская по магическим минералам находится по адресу: г. Штормград ул. Драконовская д. 5
+        </p>
+        <p class="text">621 г. с рождения короля Артура</p>
     </footer>
     <!-- / Подвал <-->
 </body>

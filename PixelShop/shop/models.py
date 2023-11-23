@@ -22,9 +22,19 @@ class Product(models.Model):
     is_published = models.BooleanField(default=True, verbose_name='Публикация')
 
     # внешний ключ
-    
+    sale = models.ForeignKey('Sale', on_delete=models.SET_NULL, null=True)
 
     # эта ф-ия нужна чтобы в админ панели отображалось название продукта, а не Object(0) и т. п.
     def __str__(self):
         return self.title
 
+
+class Sale(models.Model):
+    """Модель описывающая кол-во продаж того или иного товара"""
+    # название товара(это просто нужно для обучения работы с БД!)
+    title = models.CharField(max_length=64, verbose_name='Название', default='')
+    # само кол-во продаж
+    sales = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f'{self.title}: {self.sales}'

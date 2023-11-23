@@ -9,5 +9,6 @@ urlpatterns = [
     path('card_product/<int:product_id>/', card_product, name='card_product'),
     path('change_product/<int:product_id>/', change_product, name='change_product'),
     path('delete_product/<int:product_id>/', delete_product, name='delete_product'),
+    path('buy_product/<int:product_fk>', buy_product, name='buy_product'),
 ]
 

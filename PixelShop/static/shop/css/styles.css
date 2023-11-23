@@ -1,0 +1,17 @@
+
+
+@font-face {
+    font-family: 'Monocraft Nerd Font';
+    src: url('../fonts/Monocraft Nerd Font.ttf') format('truetype');
+}
+
+.text {
+    font-size: 30px;
+    text-decoration: None;
+    font-family: 'Monocraft Nerd Font';
+}
+
+.outline {
+     border: 1px solid red;
+     padding: 5px;
+}
