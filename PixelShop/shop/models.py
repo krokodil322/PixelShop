@@ -22,7 +22,7 @@ class Product(models.Model):
     is_published = models.BooleanField(default=True, verbose_name='Публикация')
 
     # внешний ключ
-    sale = models.ForeignKey('Sale', on_delete=models.SET_NULL, null=True)
+    sale = models.ForeignKey('Sale', on_delete=models.SET_NULL, null=True, default=None)
 
     # эта ф-ия нужна чтобы в админ панели отображалось название продукта, а не Object(0) и т. п.
     def __str__(self):

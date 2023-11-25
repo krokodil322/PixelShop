@@ -11,10 +11,29 @@
     <h1 class="text"> {{ title }} </h1>
     <!-- Шапка -->
     <header>
-      <nav>
-        <a class="text" href="{% url 'add_product' %}">Добавить товар </a>
-        <a class="text" href="/admin"> Админ панель</a>
-      </nav>
+        <nav>
+            <a class="text" href="{% url 'add_product' %}">Добавить товар </a>
+            <a class="text" href="/admin"> Админ панель</a>
+        </nav>
+        <nav>
+            <h4 class="text">Сортировать по:</h4>
+            <form class="text" method="post" action="{% url 'home' %}">
+                <!-- Нужен для защиты формы от csrf-атак -->
+                {% csrf_token %}
+                <select name="sort_key" class="text">
+                    <option value="absent">---</option>
+                    <option value="alphabet">По алфавиту А-Я</option>
+                    <option value="alphabet-reverse">По алфавиту Я-А</option>
+                    <option value="price">По цене - возрастание</option>
+                    <option value="price-reverse">По цене - убывание</option>
+                    <option value="sales">По продажам - возрастарние</option>
+                    <option value="sales-reverse">По продажам - убывание</option>
+                    <option value="date">По дате добавления - сначала новые</option>
+                    <option value="date-reverse">По дате добавления - сначала старые</option>
+                </select>
+                <button class="text" type="submit">Сортировать</button>
+            </form>
+        </nav>
     </header>
     <!-- / Шапка -->
     <!-- Список товаров -->
@@ -24,10 +43,11 @@
     <!-- / Список товаров <-->
     {% for product, sales in products %}
         <div class="outline">
-            <p>
+            <p class="text">
                 <a class="text" href="{% url 'card_product' product.id %}">
-                    {{ product.title }} {{ product.price }} Продано: {{ sales }}
+                    {{ product.title }} {{ product.price }}
                 </a>
+                Продано: {{ sales }}
             </p>
             <img src="{{ product.image.url }}" width="100" height="100">
         </div>

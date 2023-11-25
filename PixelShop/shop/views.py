@@ -1,5 +1,6 @@
 from .models import *
 from .forms import *
+from .services import index_service
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseNotFound
@@ -8,12 +9,12 @@ from django.http import HttpResponseNotFound
 def index(request):
     """Функция которая отображает главную страницу сайта"""
 
-    products = []
-    for product_obj in Product.objects.all():
-        sale_obj = Sale.objects.filter(id=product_obj.sale_id)[0]
-        products.append(
-            (product_obj, sale_obj.sales)
-        )
+    # дёргаем ключ сортировки из формы
+    # по умолчанию стоит absent, что значит
+    # вывести всё без каких-либо сортировок
+    sort_key = request.POST.get('sort_key', 'absent')
+    # использвуем ф-ию из файла service.py
+    products = index_service(sort_key)
 
     # словарик с передаваемыми данными
     context = {
@@ -41,7 +42,10 @@ def card_product(request, product_id: int):
 
 
 def add_product(request):
-    """Функция которая добавляет данные в БД при помощи обычной формы на сайте"""
+    """
+    Функция которая добавляет данные в БД при помощи обычной формы на сайте
+    Есть большой потенциал к её изменению.
+    """
 
     # если в форме нажали кнопку добавить сработает эта ветвь:
     if request.method == 'POST':
@@ -49,14 +53,32 @@ def add_product(request):
         form = AddProductForm(request.POST, request.FILES)
         # если в пришедших данных из формы нет ошибок то:
         if form.is_valid():
-            # через форму в Django можно сохранить прямо в БД!
-            form.save()
+            # почему тут не form.save()?
+            # штука в том, что в новоприбывшие данные формы
+            # нужно добавить sale_id, а через объект формы
+            # это не получается, поэтому дёргаем всё из формы :((
+            title = form.cleaned_data.get('title')
+            image = form.cleaned_data.get('image')
+            description = form.cleaned_data.get('description')
+            price = form.cleaned_data.get('price')
+            is_published = form.cleaned_data.get('is_published')
 
+            product = Product(
+                title=title,
+                image=image,
+                description=description,
+                price=price,
+                is_published=is_published
+            )
             # сразу создаём новый объект модели продаж Sale
             # чтобы подсчитывать кол-во продаж на сайте
-            sales = Sale()
+            sale = Sale(title=title)
+            sale.save()
+            # создаём связь между объектом модели Sale и Product'а
+            product.sale_id = sale.pk
+            product.save()
 
-            return redirect('/')
+            return redirect('home')
     # если просто вывести форму на экран
     form = AddProductForm()
     # словарик с передаваемыми данными
@@ -105,6 +127,7 @@ def delete_product(request, product_id: int):
 
 def buy_product(request, product_fk: int):
     """Функция которая симулирует покупку на сайтике"""
+
     # хапаем объект из таблицы Sales по foreign key product'а
     sale_obj = Sale.objects.filter(id=product_fk)[0]
 
@@ -123,4 +146,5 @@ def buy_product(request, product_fk: int):
 
 
 def page_not_found(request, exception):
+    """Если страницу по URL'у не находит, то эта ф-ия перехватывает управление"""
     return HttpResponseNotFound('<h1>Страница не найдена!</h1>')
